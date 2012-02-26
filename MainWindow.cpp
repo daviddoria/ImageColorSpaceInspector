@@ -113,10 +113,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::EndSelectionSlot()
 {
-  double* lowerLeft = static_cast<vtkBorderRepresentation*>(this->RegionSelector->GetRepresentation())->GetPositionCoordinate()->GetComputedWorldValue (this->ImageRenderer);
+  double* lowerLeft = static_cast<vtkBorderRepresentation*>(this->RegionSelector->GetRepresentation())->
+                      GetPositionCoordinate()->GetComputedWorldValue (this->ImageRenderer);
   //std::cout << "Lower left: " << lowerLeft[0] << " " << lowerLeft[1] << std::endl;
 
-  double* upperRight = static_cast<vtkBorderRepresentation*>(this->RegionSelector->GetRepresentation())->GetPosition2Coordinate()->GetComputedWorldValue (this->ImageRenderer);
+  double* upperRight = static_cast<vtkBorderRepresentation*>(this->RegionSelector->GetRepresentation())->
+                       GetPosition2Coordinate()->GetComputedWorldValue (this->ImageRenderer);
   //std::cout << "Upper right: " << upperRight[0] << " " << upperRight[1] << std::endl;
   
   itk::Index<2> corner;
@@ -129,8 +131,11 @@ void MainWindow::EndSelectionSlot()
   
   SelectedRegion.SetIndex(corner);
   SelectedRegion.SetSize(size);
-  
-  CreatePointsFromRegion(SelectedRegion);
+
+  if(Image->GetLargestPossibleRegion().IsInside(SelectedRegion))
+  {
+    CreatePointsFromRegion(SelectedRegion);
+  }
 }
 
 void MainWindow::CreatePointsFromRegion(const itk::ImageRegion<2>& region)
