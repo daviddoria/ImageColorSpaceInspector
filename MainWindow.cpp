@@ -132,10 +132,12 @@ void MainWindow::EndSelectionSlot()
   SelectedRegion.SetIndex(corner);
   SelectedRegion.SetSize(size);
 
-  if(Image->GetLargestPossibleRegion().IsInside(SelectedRegion))
+  bool atLeastPartialOverlap = SelectedRegion.Crop(Image->GetLargestPossibleRegion());
+  if(atLeastPartialOverlap)
   {
     CreatePointsFromRegion(SelectedRegion);
   }
+
 }
 
 void MainWindow::CreatePointsFromRegion(const itk::ImageRegion<2>& region)
