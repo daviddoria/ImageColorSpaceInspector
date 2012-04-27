@@ -266,7 +266,7 @@ void MainWindow::SetupCIELab()
     scaleTransform->Scale(scale);
     
     vtkSmartPointer<vtkTransformPolyDataFilter> scaleTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-    scaleTransformFilter->SetInputConnection(this->CIELabPoints.PolyData->GetProducerPort());
+    scaleTransformFilter->SetInputData(this->CIELabPoints.PolyData);
     scaleTransformFilter->SetTransform(scaleTransform);
     scaleTransformFilter->Update();
 
@@ -345,7 +345,7 @@ void MainWindow::SetupHSVCylinder()
     transform->Translate(translation);
 
     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-    transformFilter->SetInputConnection(this->HSVPoints.PolyData->GetProducerPort());
+    transformFilter->SetInputData(this->HSVPoints.PolyData);
     transformFilter->SetTransform(transform);
     transformFilter->Update();
 
@@ -472,13 +472,11 @@ void ITKImageToVTKRGBImage(const MainWindow::ImageType::Pointer image, vtkImageD
     }
 
   // Setup and allocate the image data
-  outputImage->SetNumberOfScalarComponents(3);
-  outputImage->SetScalarTypeToUnsignedChar();
   outputImage->SetDimensions(image->GetLargestPossibleRegion().GetSize()[0],
                              image->GetLargestPossibleRegion().GetSize()[1],
                              1);
 
-  outputImage->AllocateScalars();
+  outputImage->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
 
   // Copy all of the input image pixels to the output image
   itk::ImageRegionConstIteratorWithIndex<MainWindow::ImageType> imageIterator(image,image->GetLargestPossibleRegion());
